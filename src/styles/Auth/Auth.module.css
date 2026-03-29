@@ -1,0 +1,49 @@
+.register {
+  min-width: 250px;
+  padding: 10px;
+}
+
+.registerTitle {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 23px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-align: center;
+  color: #52555f;
+}
+
+.Form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+.label {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: #000;
+}
+
+.input {
+  border-radius: 30px;
+  min-width: 253px;
+  height: 52px;
+  background: #f6f7fb;
+}
+
+.btnS {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  border-radius: 16px;
+  background: #f5f6fb;
+  height: 55px;
+  min-width: 200px;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-align: center;
+  color: #52555f;
+}

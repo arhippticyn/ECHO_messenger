@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { LoginUser, RegisterUser, type RegisterUserType as User } from './AuthSelectors'
+import { LoginUser, RegisterUser, type RegisterUserType as User } from './AuthOperation'
 
 interface AuthIniState {
   token: string
