@@ -3,7 +3,7 @@
   padding: 10px;
 }
 
-.registerTitle {
+.Title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   font-size: 23px;
@@ -31,7 +31,9 @@
   border-radius: 30px;
   min-width: 253px;
   height: 52px;
+  font-size: 18px;
   background: #f6f7fb;
+  padding: 4px;
 }
 
 .btnS {

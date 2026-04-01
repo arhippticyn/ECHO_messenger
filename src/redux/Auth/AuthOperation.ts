@@ -1,44 +1,54 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { api } from "../../api/api";
+import { createAsyncThunk } from '@reduxjs/toolkit'
+import { api } from '../../api/api'
 
 export type RegisterUserType = {
-    email: string,
-    username: string,
-    password: string
+  email: string
+  username: string
+  password: string
 }
 
-type LoginUserType = {
-    email: string,
-    password: string
+export type LoginUserType = {
+  username: string
+  password: string
 }
 
-export const RegisterUser = createAsyncThunk('auth/RegisterUser', async (user: RegisterUserType, { rejectWithValue }) => {
+export const RegisterUser = createAsyncThunk(
+  'auth/RegisterUser',
+  async (user: RegisterUserType, { rejectWithValue }) => {
     try {
-        console.log('Sending:', user)
-        const response = await api.post('/auth/register', user)
-        return response.data
+      console.log('Sending:', user)
+      const response = await api.post('/auth/register', user)
+      return response.data
     } catch (e: any) {
-        console.log('Error:', e.response?.data)  
-        return rejectWithValue(e.message)
+      console.log('Error:', e.response?.data)
+      return rejectWithValue(e.message)
     }
-})
+  }
+)
 
-export const LoginUser = createAsyncThunk('auth/LoginUser', async (user: LoginUserType, { rejectWithValue }) => {
+export const LoginUser = createAsyncThunk(
+  'auth/LoginUser',
+  async (user: LoginUserType, { rejectWithValue }) => {
     try {
-        const response = await api.post('/auth/login', user)
+      console.log('LoginUser sending:', user)
+      const response = await api.post('/auth/login', user)
 
-        return response.data
+      return response.data
     } catch (e: any) {
-        return rejectWithValue(e.message)
+      return rejectWithValue(e.message)
     }
-})
+  }
+)
 
-export const RefreshToAccess = createAsyncThunk('auth/RefreshToAccess', async (_,{ rejectWithValue }) => {
+export const RefreshToAccess = createAsyncThunk(
+  'auth/RefreshToAccess',
+  async (_, { rejectWithValue }) => {
     try {
-        const response = await api.get('/auth/refresh')
+      const response = await api.get('/auth/refresh')
 
-        return response.data
+      return response.data
     } catch (e: any) {
-        return rejectWithValue(e.message)
+      return rejectWithValue(e.message)
     }
-})
+  }
+)
