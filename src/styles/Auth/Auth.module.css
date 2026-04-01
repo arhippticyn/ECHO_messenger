@@ -1,6 +1,30 @@
 .register {
   min-width: 250px;
   padding: 10px;
+  padding-top: 0;
+}
+
+.btnsList {
+  display: flex;
+  width: 100vw;
+  position: fixed;
+  top: 88%;
+  padding: 0;
+}
+
+.btnToggle {
+  width: 52vh;
+  height: 70px;
+  font-family: 'Montserrat', sans-serif;
+  color: #000;
+  font-size: 30px;
+  border: none;
+  background: #fff;
+}
+
+.active {
+  background: #2822cb;
+  color: #fff;
 }
 
 .Title {

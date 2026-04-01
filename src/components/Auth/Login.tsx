@@ -19,7 +19,7 @@ const Login = ({}: LoginProps) => {
   }
   return (
     <div>
-      <h2 className={styles.Title}>Sign in</h2>
+      <h2 className={styles.Title}>Log in</h2>
 
       <form action="" className={styles.Form} onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="" className={styles.label}>
