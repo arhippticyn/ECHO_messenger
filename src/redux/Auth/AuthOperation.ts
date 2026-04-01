@@ -52,3 +52,13 @@ export const RefreshToAccess = createAsyncThunk(
     }
   }
 )
+
+export const GetUser = createAsyncThunk('auth/GetUser', async (_, { rejectWithValue }) => {
+    try {
+        const response = await api.get('/profile/me')
+
+        return response.data
+    } catch (e: any) {
+        return rejectWithValue(e.message)
+    }
+})
