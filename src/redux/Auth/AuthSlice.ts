@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import {
+  GetAccess,
   GetUser,
   LoginUser,
   RefreshToAccess,
@@ -8,7 +9,8 @@ import {
 } from './AuthOperation'
 
 interface AuthIniState {
-  user: User
+  user: User,
+  token: string
   isLogin: boolean
   isRefreshing: boolean
   error: string | number | null
@@ -16,6 +18,7 @@ interface AuthIniState {
 
 const AuthIniState: AuthIniState = {
   user: {} as User,
+  token: '',
   isLogin: false,
   isRefreshing: false,
   error: null,
@@ -69,6 +72,17 @@ const AuthSlice = createSlice({
         state.isRefreshing = false
       })
       .addCase(RefreshToAccess.rejected, (state, action) => {
+        state.isRefreshing = false
+        state.error = action.payload as string
+      })
+      .addCase(GetAccess.pending, (state) => {
+        state.isRefreshing = true
+      })
+      .addCase(GetAccess.fulfilled, (state, action) => {
+        state.isRefreshing = false
+        state.token = action.payload
+      })
+      .addCase(GetAccess.rejected, (state, action) => {
         state.isRefreshing = false
         state.error = action.payload as string
       })

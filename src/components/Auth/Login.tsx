@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { useTypificatedDispatch } from '../../hooks/reduxHooks'
 import styles from '../../styles/Auth/Auth.module.css'
 import { LoginUser, type LoginUserType } from '../../redux/Auth/AuthOperation'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 interface LoginProps {}
 

@@ -62,3 +62,13 @@ export const GetUser = createAsyncThunk('auth/GetUser', async (_, { rejectWithVa
         return rejectWithValue(e.message)
     }
 })
+
+export const GetAccess = createAsyncThunk('auth/GetAccess', async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get('/auth/access')
+
+    return response.data
+  } catch (e: any) {
+    return rejectWithValue(e.message)
+  }
+})
