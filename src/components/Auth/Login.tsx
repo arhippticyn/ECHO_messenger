@@ -2,20 +2,26 @@ import { useForm } from 'react-hook-form'
 import { useTypificatedDispatch } from '../../hooks/reduxHooks'
 import styles from '../../styles/Auth/Auth.module.css'
 import { LoginUser, type LoginUserType } from '../../redux/Auth/AuthOperation'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 interface LoginProps {}
 
 const Login = ({}: LoginProps) => {
   const dispatch = useTypificatedDispatch()
+  const navigate = useNavigate()
 
   const { register, handleSubmit } = useForm<LoginUserType>({
     defaultValues: { username: '', password: '' },
     mode: 'onSubmit',
   })
 
-  const onSubmit = (data: LoginUserType) => {
+  const onSubmit = async (data: LoginUserType) => {
     console.log('Login data:', data)
-    dispatch(LoginUser(data))
+    const result = await dispatch(LoginUser(data))
+
+    if (LoginUser.fulfilled.match(result)) {
+      navigate('/home')
+    }
   }
   return (
     <div>

@@ -5,19 +5,24 @@ import {
   type RegisterUserType,
 } from '../../redux/Auth/AuthOperation'
 import styles from '../../styles/Auth/Auth.module.css'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 interface RegisterProps {}
 
 const Register = ({}: RegisterProps) => {
   const dispatch = useTypificatedDispatch()
+  const navigate = useNavigate()
 
   const { register, handleSubmit } = useForm<RegisterUserType>({
     defaultValues: { username: '', email: '', password: '' },
     mode: 'onSubmit',
   })
 
-  const onSubmit = (data: RegisterUserType) => {
-    dispatch(RegisterUser(data))
+  const onSubmit = async (data: RegisterUserType) => {
+    const result = await dispatch(RegisterUser(data))
+    if (RegisterUser.fulfilled.match(result)) {
+      navigate('/home')
+    }
   }
   return (
     <div className={styles.register}>
