@@ -7,6 +7,13 @@ export type RegisterUserType = {
   password: string
 }
 
+export type UserType = {
+  id: number
+  email: string
+  username: string
+  is_online: boolean
+}
+
 export type LoginUserType = {
   username: string
   password: string
@@ -53,32 +60,41 @@ export const RefreshToAccess = createAsyncThunk(
   }
 )
 
-export const GetUser = createAsyncThunk('auth/GetUser', async (_, { rejectWithValue }) => {
+export const GetUser = createAsyncThunk(
+  'auth/GetUser',
+  async (_, { rejectWithValue }) => {
     try {
-        const response = await api.get('/profile/me')
+      const response = await api.get('/profile/me')
 
-        return response.data
+      return response.data
     } catch (e: any) {
-        return rejectWithValue(e.message)
+      return rejectWithValue(e.message)
     }
-})
-
-export const GetAccess = createAsyncThunk('auth/GetAccess', async (_, { rejectWithValue }) => {
-  try {
-    const response = await api.get('/auth/access')
-
-    return response.data
-  } catch (e: any) {
-    return rejectWithValue(e.message)
   }
-})
+)
 
-export const LogOut = createAsyncThunk('auth/LogOut', async (_, { rejectWithValue }) => {
-  try {
-    const response = await api.delete('auth/logout')
+export const GetAccess = createAsyncThunk(
+  'auth/GetAccess',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/auth/access')
 
-    return response.data
-  } catch (e: any) {
-    return rejectWithValue(e.message)
+      return response.data
+    } catch (e: any) {
+      return rejectWithValue(e.message)
+    }
   }
-})
+)
+
+export const LogOut = createAsyncThunk(
+  'auth/LogOut',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.delete('auth/logout')
+
+      return response.data
+    } catch (e: any) {
+      return rejectWithValue(e.message)
+    }
+  }
+)

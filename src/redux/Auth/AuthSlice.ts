@@ -6,11 +6,11 @@ import {
   LogOut,
   RefreshToAccess,
   RegisterUser,
-  type RegisterUserType as User,
+  type UserType,
 } from './AuthOperation'
 
 interface AuthIniState {
-  user: User,
+  user: UserType,
   token: string
   isLogin: boolean
   isRefreshing: boolean
@@ -18,7 +18,7 @@ interface AuthIniState {
 }
 
 const AuthIniState: AuthIniState = {
-  user: {} as User,
+  user: {} as UserType,
   token: '',
   isLogin: false,
   isRefreshing: false,

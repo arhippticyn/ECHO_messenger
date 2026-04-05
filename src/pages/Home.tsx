@@ -15,14 +15,15 @@ const Home = ({}: HomeProps) => {
   const token = useTypificatedSelector(selectToken)
   const navigate = useNavigate()
 
-  
-
   useEffect(() => {
     dispatch(GetUser())
   }, [dispatch])
 
   useEffect(() => {
     dispatch(GetAccess())
+  }, [])
+
+  useEffect(() => {
     if (!token) return
     const onlineStatus = new WebSocket(
       `wss://echo-bj2n.onrender.com/profile/online?token=${token}`
@@ -35,13 +36,14 @@ const Home = ({}: HomeProps) => {
   const handleLogOut = async () => {
     await dispatch(LogOut())
     navigate('/')
-}
+  }
   return (
     <div>
       Hello, {user.username}, your email: {user.email}
-      {/* Your status: {user.} */}
-
-      <button className='' onClick={handleLogOut}>Log Out</button>
+      Your status: {user?.is_online ? 'Online' : 'Offline'}
+      <button className="" onClick={handleLogOut}>
+        Log Out
+      </button>
     </div>
   )
 }
