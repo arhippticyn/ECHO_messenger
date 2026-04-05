@@ -3,6 +3,7 @@ import {
   GetAccess,
   GetUser,
   LoginUser,
+  LogOut,
   RefreshToAccess,
   RegisterUser,
   type RegisterUserType as User,
@@ -83,6 +84,17 @@ const AuthSlice = createSlice({
         state.token = action.payload
       })
       .addCase(GetAccess.rejected, (state, action) => {
+        state.isRefreshing = false
+        state.error = action.payload as string
+      })
+      .addCase(LogOut.pending, (state) => {
+        state.isRefreshing = true
+      })
+      .addCase(LogOut.fulfilled, (state) => {
+        state.isRefreshing = false
+        state.isLogin = false
+      })
+      .addCase(LogOut.rejected, (state, action) => {
         state.isRefreshing = false
         state.error = action.payload as string
       })

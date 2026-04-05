@@ -72,3 +72,13 @@ export const GetAccess = createAsyncThunk('auth/GetAccess', async (_, { rejectWi
     return rejectWithValue(e.message)
   }
 })
+
+export const LogOut = createAsyncThunk('auth/LogOut', async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.delete('auth/logout')
+
+    return response.data
+  } catch (e: any) {
+    return rejectWithValue(e.message)
+  }
+})

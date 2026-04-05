@@ -1,34 +1,49 @@
-import { useEffect } from "react"
-import { useTypificatedDispatch, useTypificatedSelector } from "../hooks/reduxHooks"
-import { selectToken, selectUser } from "../redux/Auth/AuthSelectors"
-import { GetAccess, GetUser } from "../redux/Auth/AuthOperation"
+import { useEffect } from 'react'
+import {
+  useTypificatedDispatch,
+  useTypificatedSelector,
+} from '../hooks/reduxHooks'
+import { selectToken, selectUser } from '../redux/Auth/AuthSelectors'
+import { GetAccess, GetUser, LogOut } from '../redux/Auth/AuthOperation'
+import { useNavigate } from 'react-router-dom'
 
-interface HomeProps {
-    
-}
+interface HomeProps {}
 
 const Home = ({}: HomeProps) => {
-    const dispatch = useTypificatedDispatch()
-    const user = useTypificatedSelector(selectUser)
-    const token = useTypificatedSelector(selectToken)
+  const dispatch = useTypificatedDispatch()
+  const user = useTypificatedSelector(selectUser)
+  const token = useTypificatedSelector(selectToken)
+  const navigate = useNavigate()
 
-    useEffect(() => {
-        dispatch(GetUser())
-    }, [dispatch])
+  
 
-        useEffect(() => {
-        dispatch(GetAccess())
-        if (!token) return
-        const onlineStatus = new WebSocket(`wss://echo-bj2n.onrender.com/profile/online?token=${token}`)
-        onlineStatus.onopen = () => console.log('Connected')
-        onlineStatus.onerror = (e) => console.log('Error:', e)
-        return () => onlineStatus.close()
-    },[token])
-    return (
-        <div>
-            Hello, {user.username}, your email: {user.email}
-        </div>
+  useEffect(() => {
+    dispatch(GetUser())
+  }, [dispatch])
+
+  useEffect(() => {
+    dispatch(GetAccess())
+    if (!token) return
+    const onlineStatus = new WebSocket(
+      `wss://echo-bj2n.onrender.com/profile/online?token=${token}`
     )
+    onlineStatus.onopen = () => console.log('Connected')
+    onlineStatus.onerror = e => console.log('Error:', e)
+    return () => onlineStatus.close()
+  }, [token])
+
+  const handleLogOut = async () => {
+    await dispatch(LogOut())
+    navigate('/')
+}
+  return (
+    <div>
+      Hello, {user.username}, your email: {user.email}
+      {/* Your status: {user.} */}
+
+      <button className='' onClick={handleLogOut}>Log Out</button>
+    </div>
+  )
 }
 
 export default Home
