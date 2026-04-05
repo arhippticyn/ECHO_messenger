@@ -1,0 +1,27 @@
+import { useForm } from 'react-hook-form'
+import { useTypificatedDispatch } from '../../hooks/reduxHooks'
+import styles from '../../styles/Users/Users.module.css'
+import { FaSearch } from 'react-icons/fa'
+import { GetUsersBySearch } from '../../redux/Users/UsersOperation'
+
+interface UserFormProps {}
+
+const UserForm = ({}: UserFormProps) => {
+  const dispatch = useTypificatedDispatch()
+  const { register, handleSubmit } = useForm({
+    defaultValues: { search: '' },
+    mode: 'onSubmit',
+  })
+
+  const onSubmit = (data: {search: string}) => {
+    dispatch(GetUsersBySearch(data.search))
+  }
+  return (
+    <form action="" className={styles.UserForm} onSubmit={handleSubmit(onSubmit)}>
+        <input {...register('search')} type="text" className={styles.userInput} />
+        <button type="submit" className={styles.UserBtnSubmit}><FaSearch /></button>
+    </form>
+  )
+}
+
+export default UserForm

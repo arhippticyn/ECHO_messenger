@@ -6,6 +6,8 @@ import {
 import { selectToken, selectUser } from '../redux/Auth/AuthSelectors'
 import { GetAccess, GetUser, LogOut } from '../redux/Auth/AuthOperation'
 import { useNavigate } from 'react-router-dom'
+import UserForm from '../components/Users/UserForm'
+import UsersList from '../components/Users/UsersList'
 
 interface HomeProps {}
 
@@ -44,6 +46,9 @@ const Home = ({}: HomeProps) => {
       <button className="" onClick={handleLogOut}>
         Log Out
       </button>
+
+      <UserForm />
+      <UsersList />
     </div>
   )
 }
