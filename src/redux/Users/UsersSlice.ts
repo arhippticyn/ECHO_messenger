@@ -5,6 +5,7 @@ import { GetUsersBySearch } from "./UsersOperation";
 
 interface UserState {
     users: null | UserType[],
+    user_id: null | number
     isRefreshing: boolean,
     error: null | string
 }
@@ -18,7 +19,11 @@ const UserIniState:UserState = {
 const UsersSlice = createSlice({
     name: 'users',
     initialState: UserIniState,
-    reducers: {},
+    reducers: {
+      selectedUser(state, action) {
+        state.user_id = action.payload
+      }
+    },
     extraReducers: (builber) => {
         builber
               .addCase(GetUsersBySearch.pending, (state) => {
@@ -35,4 +40,5 @@ const UsersSlice = createSlice({
     }
 })
 
+export const { selectedUser } = UsersSlice.actions
 export const UserReducer = UsersSlice.reducer

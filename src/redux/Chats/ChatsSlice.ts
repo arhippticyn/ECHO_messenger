@@ -4,8 +4,6 @@ import {
   CreatePrivateChat,
   DeleteChat,
   GetAllChats,
-  type ChatTypeGroupCreate as ChatGroup,
-  type ChatTypePrivateCreate as ChatPrivate,
 } from './ChatsOperation'
 
 type Chat = {
