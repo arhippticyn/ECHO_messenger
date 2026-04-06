@@ -8,6 +8,7 @@ import { GetAccess, GetUser, LogOut } from '../redux/Auth/AuthOperation'
 import { useNavigate } from 'react-router-dom'
 import UserForm from '../components/Users/UserForm'
 import UsersList from '../components/Users/UsersList'
+import ChatsGroupForm from '../components/Chats/ChatsGroupForm'
 
 interface HomeProps {}
 
@@ -49,6 +50,8 @@ const Home = ({}: HomeProps) => {
 
       <UserForm />
       <UsersList />
+
+      <ChatsGroupForm />
     </div>
   )
 }

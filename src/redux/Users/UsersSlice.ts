@@ -1,11 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { UserType } from "../Auth/AuthOperation";
-import { GetUsersBySearch } from "./UsersOperation";
+import { GetUsersById, GetUsersBySearch } from "./UsersOperation";
 
 
 interface UserState {
     users: null | UserType[],
-    user_id: null | number
     isRefreshing: boolean,
     error: null | string
 }
@@ -20,9 +19,6 @@ const UsersSlice = createSlice({
     name: 'users',
     initialState: UserIniState,
     reducers: {
-      selectedUser(state, action) {
-        state.user_id = action.payload
-      }
     },
     extraReducers: (builber) => {
         builber
@@ -37,8 +33,14 @@ const UsersSlice = createSlice({
                 state.isRefreshing = false
                 state.error = action.payload as string
               })
+              .addCase(GetUsersById.pending, (state) => {
+                state.isRefreshing = true
+              })
+              .addCase(GetUsersById.fulfilled, (state, action) => {
+                state.isRefreshing = false
+                state.users = action.payload
+              })
     }
 })
 
-export const { selectedUser } = UsersSlice.actions
 export const UserReducer = UsersSlice.reducer
