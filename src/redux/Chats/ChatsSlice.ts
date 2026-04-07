@@ -9,7 +9,8 @@ import {
 type Chat = {
   id: number
   type: 'group' | 'private'
-  title: string | null
+  title: string | null,
+  interlocutor_name?: string
 }
 
 interface ChatsIniStateType {
@@ -63,6 +64,7 @@ const ChatsSlice = createSlice({
       })
       .addCase(GetAllChats.fulfilled, (state, action) => {
         state.isRefreshing = false
+        console.log(action.payload)
         state.chats = action.payload
       })
       .addCase(GetAllChats.rejected, (state, action) => {
@@ -75,7 +77,7 @@ const ChatsSlice = createSlice({
       .addCase(DeleteChat.fulfilled, (state, action) => {
         state.isRefreshing = false
         state.chats = state.chats.filter(
-          chat => chat.id !== state.selectChat_id
+          chat => chat.id !== action.payload
         )
       })
       .addCase(DeleteChat.rejected, (state, action) => {
