@@ -1,16 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit'
 import {
+  AddUsersGroupO,
   CreateGroupChat,
   CreatePrivateChat,
   DeleteChat,
+  DeleteUsersGroup,
   GetAllChats,
 } from './ChatsOperation'
+
+type Participant = {
+  id: number,
+  user_id: number,
+  role: 'base' | 'admin'
+}
 
 type Chat = {
   id: number
   type: 'group' | 'private'
   title: string | null,
   interlocutor_name?: string
+  participants: Participant[]
 }
 
 interface ChatsIniStateType {
@@ -81,6 +90,35 @@ const ChatsSlice = createSlice({
         )
       })
       .addCase(DeleteChat.rejected, (state, action) => {
+        state.isRefreshing = false
+        state.error = action.payload as string
+      })
+      .addCase(AddUsersGroupO.pending, (state) => {
+        state.isRefreshing = true
+      })
+      .addCase(AddUsersGroupO.fulfilled, (state, action) => {
+        state.isRefreshing = false
+        const chat = state.chats.find(c => c.id === action.payload.chat_id)
+
+        if (chat) {
+          chat.participants = [...(chat.participants || []), action.payload]
+        }
+      })
+      .addCase(AddUsersGroupO.rejected, (state, action) => {
+        state.isRefreshing = false
+        state.error = action.payload as string
+      })
+      .addCase(DeleteUsersGroup.pending, (state) => {
+        state.isRefreshing = true
+      })
+      .addCase(DeleteUsersGroup.fulfilled, (state, action) => {
+        state.isRefreshing = false
+        const chat = state.chats.find(c => c.id === action.payload.chat_id)
+        if (chat && chat.participants) {
+          chat.participants = chat.participants.filter(p => p.user_id !== action.payload.user_id)
+        }
+      })
+      .addCase(DeleteUsersGroup.rejected, (state, action) => {
         state.isRefreshing = false
         state.error = action.payload as string
       })

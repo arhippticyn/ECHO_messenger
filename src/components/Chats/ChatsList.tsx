@@ -5,6 +5,7 @@ import {
 } from '../../hooks/reduxHooks'
 import { selectChats } from '../../redux/Chats/ChatsSelectors'
 import { DeleteChat, GetAllChats } from '../../redux/Chats/ChatsOperation'
+import { selectChatId } from '../../redux/Chats/ChatsSlice'
 
 interface ChatsListProps {}
 
@@ -27,9 +28,7 @@ const ChatsList = ({}: ChatsListProps) => {
                     ? chat.title || `Group ${chat.id}`
                     : chat.interlocutor_name || 'Имя не пришло'}
                 </h3>
-                <pre style={{ fontSize: '10px' }}>
-                  {JSON.stringify(chat, null, 2)}
-                </pre>
+                <button onClick={() => dispatch(selectChatId(chat.id))}>Add user</button>
               </>
             ) : (
               <>

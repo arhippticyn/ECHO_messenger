@@ -10,6 +10,7 @@ import UserForm from '../components/Users/UserForm'
 import UsersList from '../components/Users/UsersList'
 import ChatsGroupForm from '../components/Chats/ChatsGroupForm'
 import ChatsList from '../components/Chats/ChatsList'
+import AddUsersGroup from '../components/Chats/AdminFunc/AddUsersGroup'
 
 interface HomeProps {}
 
@@ -54,6 +55,8 @@ const Home = ({}: HomeProps) => {
 
       <ChatsGroupForm />
       <ChatsList />
+
+      <AddUsersGroup />
     </div>
   )
 }
