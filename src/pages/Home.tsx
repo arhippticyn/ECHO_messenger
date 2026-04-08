@@ -11,6 +11,7 @@ import UsersList from '../components/Users/UsersList'
 import ChatsGroupForm from '../components/Chats/ChatsGroupForm'
 import ChatsList from '../components/Chats/ChatsList'
 import AddUsersGroup from '../components/Chats/AdminFunc/AddUsersGroup'
+import DeleteUsersGroup from '../components/Chats/AdminFunc/DeleteUsersGroup'
 
 interface HomeProps {}
 
@@ -57,6 +58,7 @@ const Home = ({}: HomeProps) => {
       <ChatsList />
 
       <AddUsersGroup />
+      <DeleteUsersGroup />
     </div>
   )
 }

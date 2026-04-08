@@ -80,7 +80,7 @@ export const AddUsersGroupO = createAsyncThunk(
   }
 )
 
-export const DeleteUsersGroup = createAsyncThunk(
+export const DeleteUsersGroupO = createAsyncThunk(
   'chats/DeleteUsersGroup',
   async (
     { chat_id, user_id }: { chat_id: number; user_id: number },

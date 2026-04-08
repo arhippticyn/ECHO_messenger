@@ -4,7 +4,7 @@ import {
   CreateGroupChat,
   CreatePrivateChat,
   DeleteChat,
-  DeleteUsersGroup,
+  DeleteUsersGroupO,
   GetAllChats,
 } from './ChatsOperation'
 
@@ -108,17 +108,17 @@ const ChatsSlice = createSlice({
         state.isRefreshing = false
         state.error = action.payload as string
       })
-      .addCase(DeleteUsersGroup.pending, (state) => {
+      .addCase(DeleteUsersGroupO.pending, (state) => {
         state.isRefreshing = true
       })
-      .addCase(DeleteUsersGroup.fulfilled, (state, action) => {
+      .addCase(DeleteUsersGroupO.fulfilled, (state, action) => {
         state.isRefreshing = false
         const chat = state.chats.find(c => c.id === action.payload.chat_id)
         if (chat && chat.participants) {
           chat.participants = chat.participants.filter(p => p.user_id !== action.payload.user_id)
         }
       })
-      .addCase(DeleteUsersGroup.rejected, (state, action) => {
+      .addCase(DeleteUsersGroupO.rejected, (state, action) => {
         state.isRefreshing = false
         state.error = action.payload as string
       })
