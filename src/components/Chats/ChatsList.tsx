@@ -10,6 +10,7 @@ import {
 import { DeleteChat, GetAllChats } from '../../redux/Chats/ChatsOperation'
 import { selectChatId } from '../../redux/Chats/ChatsSlice'
 import { selectUser } from '../../redux/Auth/AuthSelectors'
+import { Link } from 'react-router-dom'
 
 interface ChatsListProps {}
 
@@ -39,33 +40,34 @@ const ChatsList = ({}: ChatsListProps) => {
               padding: '10px',
             }}
           >
-            <h3>
-              {chat.type === 'group'
-                ? chat.title || `Группа ${chat.id}`
-                : chat.interlocutor_name || 'Личный чат'}
-            </h3>
+            <Link
+              to={`/chat/${chat.id}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <h3>
+                {chat.type === 'group'
+                  ? chat.title || `Группа ${chat.id}`
+                  : chat.interlocutor_name}
+              </h3>
+            </Link>
 
             {chat.type === 'group' && (
               <>
                 <button onClick={() => dispatch(selectChatId(chat.id))}>
                   Manage users
                 </button>
-
                 {isIAdmin && (
                   <button
-                    onClick={() => dispatch(DeleteChat(chat.id))}
+                    onClick={e => {
+                      e.stopPropagation()
+                      dispatch(DeleteChat(chat.id))
+                    }}
                     style={{ color: 'red' }}
                   >
                     Delete Group
                   </button>
                 )}
               </>
-            )}
-
-            {chat.type === 'private' && (
-              <button onClick={() => dispatch(DeleteChat(chat.id))}>
-                Close Chat
-              </button>
             )}
           </li>
         )

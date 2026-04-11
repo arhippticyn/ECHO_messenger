@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 
 const AuthPage = lazy(() => import('./pages/Auth'))
 const HomePage = lazy(() => import('./pages/Home'))
+const ChatPage = lazy(() => import('./pages/Chat'))
 
 function App() {
   return (
@@ -24,7 +25,22 @@ function App() {
       <>
         <Routes>
           <Route path="/" element={<AuthPage />} />
-          <Route path='/home' element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/chat/:chatId"
+            element={
+              <ProtectedRoute>
+                <ChatPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </>
     </Suspense>
