@@ -5,7 +5,6 @@ import {
 } from '../../hooks/reduxHooks'
 import {
   selectChats,
-  selectChatId as selectorChatId,
 } from '../../redux/Chats/ChatsSelectors'
 import { DeleteChat, GetAllChats } from '../../redux/Chats/ChatsOperation'
 import { selectChatId } from '../../redux/Chats/ChatsSlice'
