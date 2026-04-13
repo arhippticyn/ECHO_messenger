@@ -36,3 +36,12 @@ export const UploadFileMessage = createAsyncThunk(
 )
 
 
+export const DeleteMessage = createAsyncThunk('messages/DeleteMessage', async ({chat_id, id}: {chat_id: number, id: number}, { rejectWithValue }) => {
+  try {
+    const response = await api.delete(`/message/${chat_id}/message/${id}`)
+
+    return response.data
+  } catch (e: any) {
+    return rejectWithValue(e.message)
+  }
+})

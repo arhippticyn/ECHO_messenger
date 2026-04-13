@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { GetMessages } from './MessageOperation'
+import { DeleteMessage, GetMessages } from './MessageOperation'
 
 export type Message = {
   id: number
   type: 'text' | 'image'
   content?: string
   file_url?: string
-  owner_id: number
+  sender_id: number
 }
 
 interface MessageIniType {
@@ -39,6 +39,23 @@ const MessageSlice = createSlice({
         state.messages = action.payload
       })
       .addCase(GetMessages.rejected, (state, action) => {
+        state.isRefreshing = false
+        state.error = action.payload as string
+      })
+      .addCase(DeleteMessage.pending, state => {
+        state.isRefreshing = true
+      })
+      .addCase(DeleteMessage.fulfilled, (state, action) => {
+        state.isRefreshing = false
+        const deletedId =
+          typeof action.payload === 'object'
+            ? action.payload.id
+            : action.payload
+        state.messages = state.messages.filter(
+          message => message.id !== deletedId
+        )
+      })
+      .addCase(DeleteMessage.rejected, (state, action) => {
         state.isRefreshing = false
         state.error = action.payload as string
       })

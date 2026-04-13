@@ -5,11 +5,12 @@ import {
 } from '../hooks/reduxHooks'
 import { useEffect } from 'react'
 import { selectChatId } from '../redux/Chats/ChatsSlice'
-import { GetMessages } from '../redux/Message/MessageOperation'
+import { DeleteMessage, GetMessages } from '../redux/Message/MessageOperation'
 import { selectMessages } from '../redux/Message/MessageSelectors'
 import { selectUsers } from '../redux/Users/UserSelectors'
 import MessageSend from '../components/Message/MessageSend'
 import { selectUser } from '../redux/Auth/AuthSelectors'
+import { MdOutlineDelete } from 'react-icons/md'
 
 interface ChatProps {}
 
@@ -35,7 +36,7 @@ const Chat = ({}: ChatProps) => {
 
       <ul>
         {messages.map(message => {
-          const senderId = message.owner_id || (message as any).sender_id
+          const senderId = message.sender_id || (message as any).sender_id
 
           const author = users?.find(u => u.id === senderId)
 
@@ -56,6 +57,17 @@ const Chat = ({}: ChatProps) => {
                   alt="attachment"
                   style={{ maxWidth: '200px' }}
                 />
+              )}
+              {senderId === user?.id && (
+                <button
+                  onClick={() =>
+                    dispatch(
+                      DeleteMessage({ chat_id: Number(chatId), id: message.id })
+                    )
+                  }
+                >
+                  <MdOutlineDelete />
+                </button>
               )}
             </li>
           )
