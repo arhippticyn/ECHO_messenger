@@ -45,3 +45,15 @@ export const DeleteMessage = createAsyncThunk('messages/DeleteMessage', async ({
     return rejectWithValue(e.message)
   }
 })
+
+export const PatchMessage = createAsyncThunk('messages/PatchMessage', async ({chat_id, id, new_content}: {chat_id: number, id: number, new_content: string}, { rejectWithValue }) => {
+  try {
+    const response = await api.patch(`/message/${chat_id}/message/${id}`, {
+      new_content
+    })
+
+    return response.data
+  } catch (e: any) {
+    return rejectWithValue(e.message)
+  }
+})

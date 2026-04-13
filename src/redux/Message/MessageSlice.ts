@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { DeleteMessage, GetMessages } from './MessageOperation'
+import { DeleteMessage, GetMessages, PatchMessage } from './MessageOperation'
 
 export type Message = {
   id: number
@@ -12,13 +12,15 @@ export type Message = {
 interface MessageIniType {
   isRefreshing: boolean
   error: string
-  messages: Message[]
+  messages: Message[],
+  selectPatchMessageId: number | null
 }
 
 const MessageIniState: MessageIniType = {
   messages: [],
   isRefreshing: false,
   error: '',
+  selectPatchMessageId: null
 }
 
 const MessageSlice = createSlice({
@@ -28,6 +30,9 @@ const MessageSlice = createSlice({
     addMessage: (state, action) => {
       state.messages.push(action.payload)
     },
+    SelectMessageId: (state, action) => {
+      state.selectPatchMessageId = action.payload
+    }
   },
   extraReducers: builder => {
     builder
@@ -59,8 +64,25 @@ const MessageSlice = createSlice({
         state.isRefreshing = false
         state.error = action.payload as string
       })
+      .addCase(PatchMessage.pending, state => {
+        state.isRefreshing = true
+      })
+      .addCase(PatchMessage.fulfilled, (state, action) => {
+        state.isRefreshing = false
+        const updatedMessage = action.payload
+
+        const index = state.messages.findIndex(m => m.id === updatedMessage.id)
+
+        if (index !== -1) {
+          state.messages[index] = updatedMessage
+        }
+      })
+      .addCase(PatchMessage.rejected, (state, action) => {
+        state.isRefreshing = false
+        state.error = action.payload as string
+      })
   },
 })
 
-export const { addMessage } = MessageSlice.actions
+export const { addMessage, SelectMessageId } = MessageSlice.actions
 export const MessageReducer = MessageSlice.reducer

@@ -11,6 +11,9 @@ import { selectUsers } from '../redux/Users/UserSelectors'
 import MessageSend from '../components/Message/MessageSend'
 import { selectUser } from '../redux/Auth/AuthSelectors'
 import { MdOutlineDelete } from 'react-icons/md'
+import { SelectMessageId } from '../redux/Message/MessageSlice'
+import { BsPencilSquare } from 'react-icons/bs'
+import MessagePatch from '../components/Message/MessagePatch'
 
 interface ChatProps {}
 
@@ -33,6 +36,7 @@ const Chat = ({}: ChatProps) => {
       <p>chat {chatId}</p>
 
       <MessageSend />
+      <MessagePatch />
 
       <ul>
         {messages.map(message => {
@@ -68,6 +72,10 @@ const Chat = ({}: ChatProps) => {
                 >
                   <MdOutlineDelete />
                 </button>
+              )}
+
+              { senderId === user?.id && (
+                <button onClick={() => dispatch(SelectMessageId(message.id))}><BsPencilSquare /></button>
               )}
             </li>
           )
