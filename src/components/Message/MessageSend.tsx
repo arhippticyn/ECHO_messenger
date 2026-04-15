@@ -7,6 +7,7 @@ import { selectUser } from '../../redux/Auth/AuthSelectors'
 import { useForm } from 'react-hook-form'
 import { useEffect, useRef } from 'react'
 import { addMessage } from '../../redux/Message/MessageSlice'
+import MessageFile from './MessageFile'
 
 interface MessageSendProps {}
 
@@ -64,16 +65,19 @@ const MessageSend = ({}: MessageSendProps) => {
   }
 
   return (
-    <form action="" onSubmit={handleSubmit(onSubmit)}>
-      <input
-        {...register('content', { required: true })}
-        type="text"
-        autoComplete="off"
-        placeholder="Напишите сообщение..."
-      />
+    <div>
+      <MessageFile />
+      <form action="" onSubmit={handleSubmit(onSubmit)}>
+        <input
+          {...register('content', { required: true })}
+          type="text"
+          autoComplete="off"
+          placeholder="Напишите сообщение..."
+        />
 
-      <button type="submit">Send</button>
-    </form>
+        <button type="submit">Send</button>
+      </form>
+    </div>
   )
 }
 

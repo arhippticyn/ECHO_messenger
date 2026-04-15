@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { DeleteMessage, GetMessages, PatchMessage } from './MessageOperation'
+import { DeleteMessage, GetMessages, PatchMessage, UploadFileMessage } from './MessageOperation'
 
 export type Message = {
   id: number
@@ -78,6 +78,17 @@ const MessageSlice = createSlice({
         }
       })
       .addCase(PatchMessage.rejected, (state, action) => {
+        state.isRefreshing = false
+        state.error = action.payload as string
+      })
+      .addCase(UploadFileMessage.pending, (state) => {
+        state.isRefreshing = true
+      })
+      .addCase(UploadFileMessage.fulfilled, (state, action) => {
+        state.isRefreshing = false
+        state.messages.push(action.payload)
+      })
+      .addCase(UploadFileMessage.rejected, (state, action) => {
         state.isRefreshing = false
         state.error = action.payload as string
       })

@@ -57,7 +57,7 @@ const Chat = ({}: ChatProps) => {
               {message.content && <p>{message.content}</p>}
               {message.file_url && (
                 <img
-                  src={message.file_url}
+                  src={`https://echo-bj2n.onrender.com${message.file_url}`}
                   alt="attachment"
                   style={{ maxWidth: '200px' }}
                 />

@@ -17,16 +17,11 @@ export const GetMessages = createAsyncThunk(
 export const UploadFileMessage = createAsyncThunk(
   'messages/UploadFileMessage',
   async (
-    { chat_id, file }: { chat_id: number; file: File },
+    { chat_id, file }: { chat_id: number; file: FormData },
     { rejectWithValue }
   ) => {
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await api.post(`/message/${chat_id}/upload`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      const response = await api.post(`/message/${chat_id}/upload`, file)
 
       return response.data
     } catch (e: any) {
@@ -35,25 +30,40 @@ export const UploadFileMessage = createAsyncThunk(
   }
 )
 
+export const DeleteMessage = createAsyncThunk(
+  'messages/DeleteMessage',
+  async (
+    { chat_id, id }: { chat_id: number; id: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.delete(`/message/${chat_id}/message/${id}`)
 
-export const DeleteMessage = createAsyncThunk('messages/DeleteMessage', async ({chat_id, id}: {chat_id: number, id: number}, { rejectWithValue }) => {
-  try {
-    const response = await api.delete(`/message/${chat_id}/message/${id}`)
-
-    return response.data
-  } catch (e: any) {
-    return rejectWithValue(e.message)
+      return response.data
+    } catch (e: any) {
+      return rejectWithValue(e.message)
+    }
   }
-})
+)
 
-export const PatchMessage = createAsyncThunk('messages/PatchMessage', async ({chat_id, id, new_content}: {chat_id: number, id: number, new_content: string}, { rejectWithValue }) => {
-  try {
-    const response = await api.patch(`/message/${chat_id}/message/${id}`, {
-      new_content
-    })
+export const PatchMessage = createAsyncThunk(
+  'messages/PatchMessage',
+  async (
+    {
+      chat_id,
+      id,
+      new_content,
+    }: { chat_id: number; id: number; new_content: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.patch(`/message/${chat_id}/message/${id}`, {
+        new_content,
+      })
 
-    return response.data
-  } catch (e: any) {
-    return rejectWithValue(e.message)
+      return response.data
+    } catch (e: any) {
+      return rejectWithValue(e.message)
+    }
   }
-})
+)
