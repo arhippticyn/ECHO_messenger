@@ -14,6 +14,7 @@ import { MdOutlineDelete } from 'react-icons/md'
 import { SelectMessageId } from '../redux/Message/MessageSlice'
 import { BsPencilSquare } from 'react-icons/bs'
 import MessagePatch from '../components/Message/MessagePatch'
+import { selectChats } from '../redux/Chats/ChatsSelectors'
 
 interface ChatProps {}
 
@@ -23,6 +24,13 @@ const Chat = ({}: ChatProps) => {
   const messages = useTypificatedSelector(selectMessages)
   const users = useTypificatedSelector(selectUsers)
   const user = useTypificatedSelector(selectUser)
+  const chats = useTypificatedSelector(selectChats)
+
+  const chat = chats.find(chat => chat.id === Number(chatId))
+
+  const participant = chat?.participants.find(participant => participant.user_id !== user.id)
+
+  const filterParticipant = users?.find(user => user.id === participant?.id)
 
   useEffect(() => {
     if (chatId) {
@@ -33,7 +41,11 @@ const Chat = ({}: ChatProps) => {
   }, [chatId, dispatch])
   return (
     <div>
-      <p>chat {chatId}</p>
+      {chat?.type === 'private' ? (
+        <p>{filterParticipant?.username}</p>
+      ) : (
+        <p>{chat?.title}</p>
+      )}
 
       <MessageSend />
       <MessagePatch />
