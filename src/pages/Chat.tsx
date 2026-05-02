@@ -1,12 +1,9 @@
 import { useParams } from 'react-router-dom'
-import {
-  useTypificatedDispatch,
-  useTypificatedSelector,
-} from '../hooks/reduxHooks'
+import { useTypificatedDispatch, useTypificatedSelector } from '../hooks/reduxHooks'
 import { useEffect } from 'react'
 import { selectChatId } from '../redux/Chats/ChatsSlice'
-import { DeleteMessage, GetMessages } from '../redux/Message/MessageOperation'
-import { selectMessages } from '../redux/Message/MessageSelectors'
+import { DeleteMessage, GetMessages, GetMessageStatus } from '../redux/Message/MessageOperation'
+import { selectMessages, selectMessageStatus } from '../redux/Message/MessageSelectors'
 import { selectUsers } from '../redux/Users/UserSelectors'
 import MessageSend from '../components/Message/MessageSend'
 import { selectUser } from '../redux/Auth/AuthSelectors'
@@ -15,22 +12,20 @@ import { SelectMessageId } from '../redux/Message/MessageSlice'
 import { BsPencilSquare } from 'react-icons/bs'
 import MessagePatch from '../components/Message/MessagePatch'
 import { selectChats } from '../redux/Chats/ChatsSelectors'
+import MessageItem from '../components/Message/MessageItem'
 
-interface ChatProps {}
-
-const Chat = ({}: ChatProps) => {
+const Chat = () => {
   const { chatId } = useParams<{ chatId: string }>()
   const dispatch = useTypificatedDispatch()
   const messages = useTypificatedSelector(selectMessages)
   const users = useTypificatedSelector(selectUsers)
   const user = useTypificatedSelector(selectUser)
   const chats = useTypificatedSelector(selectChats)
+  const messageStatus = useTypificatedSelector(selectMessageStatus)
 
   const chat = chats.find(chat => chat.id === Number(chatId))
-
-  const participant = chat?.participants.find(participant => participant.user_id !== user.id)
-
-  const filterParticipant = users?.find(user => user.id === participant?.id)
+  const participant = chat?.participants.find(p => p.user_id !== user?.id)
+  const filterParticipant = users?.find(u => u.id === participant?.user_id)
 
   useEffect(() => {
     if (chatId) {
@@ -39,6 +34,15 @@ const Chat = ({}: ChatProps) => {
       dispatch(GetMessages(id))
     }
   }, [chatId, dispatch])
+
+  useEffect(() => {
+    if (chatId && messages.length > 0) {
+      messages.forEach(message => {
+        dispatch(GetMessageStatus({ chat_id: Number(chatId), message_id: message.id }))
+      })
+    }
+  }, [messages, chatId, dispatch])
+
   return (
     <div>
       {chat?.type === 'private' ? (
@@ -52,44 +56,43 @@ const Chat = ({}: ChatProps) => {
 
       <ul>
         {messages.map(message => {
-          const senderId = message.sender_id || (message as any).sender_id
-
+          const senderId = message.sender_id
           const author = users?.find(u => u.id === senderId)
-
-          const displayName =
-            author?.username ||
-            (user?.id === senderId ? user.username : 'Unknown User')
+          const displayName = author?.username || (user?.id === senderId ? user.username : 'Unknown User')
+          const status = messageStatus?.find(s => s.message_id === message.id)?.status
 
           return (
-            <li key={message.id} style={{ marginBottom: '10px' }}>
-              <p>
-                <strong>{displayName}:</strong>
-              </p>
+            <MessageItem
+              key={message.id}
+              message={message}
+              user={user}
+              chatId={chatId}
+              messageStatus={messageStatus}
+            >
+              <p><strong>{displayName}:</strong></p>
 
               {message.content && <p>{message.content}</p>}
               {message.file_url && (
                 <img
-                  src={`https://echo-bj2n.onrender.com${message.file_url}`}
+                  src={`${import.meta.env.VITE_API_URL}${message.file_url}`}
                   alt="attachment"
                   style={{ maxWidth: '200px' }}
                 />
               )}
-              {senderId === user?.id && (
-                <button
-                  onClick={() =>
-                    dispatch(
-                      DeleteMessage({ chat_id: Number(chatId), id: message.id })
-                    )
-                  }
-                >
-                  <MdOutlineDelete />
-                </button>
-              )}
 
-              { senderId === user?.id && (
-                <button onClick={() => dispatch(SelectMessageId(message.id))}><BsPencilSquare /></button>
+              {status && <p>{status}</p>}
+
+              {senderId === user?.id && (
+                <>
+                  <button onClick={() => dispatch(DeleteMessage({ chat_id: Number(chatId), id: message.id }))}>
+                    <MdOutlineDelete />
+                  </button>
+                  <button onClick={() => dispatch(SelectMessageId(message.id))}>
+                    <BsPencilSquare />
+                  </button>
+                </>
               )}
-            </li>
+            </MessageItem>
           )
         })}
       </ul>

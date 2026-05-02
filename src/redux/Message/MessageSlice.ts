@@ -1,5 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { DeleteMessage, GetMessages, PatchMessage, UploadFileMessage } from './MessageOperation'
+import {
+  AddMessageStatus,
+  DeleteMessage,
+  GetMessages,
+  GetMessageStatus,
+  PatchMessage,
+  UploadFileMessage,
+} from './MessageOperation'
+import type { MESSAGE_STATUS } from '../../types/status'
 
 export type Message = {
   id: number
@@ -9,18 +17,28 @@ export type Message = {
   sender_id: number
 }
 
+export type MessageStatus = {
+  id: number
+  message_id: number
+  user_id: number
+  status: MESSAGE_STATUS
+  updated_at: string
+}
+
 interface MessageIniType {
   isRefreshing: boolean
   error: string
-  messages: Message[],
+  messages: Message[]
   selectPatchMessageId: number | null
+  message_status: MessageStatus[] | null
 }
 
 const MessageIniState: MessageIniType = {
   messages: [],
   isRefreshing: false,
   error: '',
-  selectPatchMessageId: null
+  selectPatchMessageId: null,
+  message_status: null,
 }
 
 const MessageSlice = createSlice({
@@ -32,7 +50,7 @@ const MessageSlice = createSlice({
     },
     SelectMessageId: (state, action) => {
       state.selectPatchMessageId = action.payload
-    }
+    },
   },
   extraReducers: builder => {
     builder
@@ -81,7 +99,7 @@ const MessageSlice = createSlice({
         state.isRefreshing = false
         state.error = action.payload as string
       })
-      .addCase(UploadFileMessage.pending, (state) => {
+      .addCase(UploadFileMessage.pending, state => {
         state.isRefreshing = true
       })
       .addCase(UploadFileMessage.fulfilled, (state, action) => {
@@ -89,6 +107,58 @@ const MessageSlice = createSlice({
         state.messages.push(action.payload)
       })
       .addCase(UploadFileMessage.rejected, (state, action) => {
+        state.isRefreshing = false
+        state.error = action.payload as string
+      })
+      .addCase(AddMessageStatus.pending, state => {
+        state.isRefreshing = true
+      })
+      .addCase(AddMessageStatus.fulfilled, (state, action) => {
+        state.isRefreshing = false
+        if (!state.message_status) {
+          state.message_status = []
+        }
+        const index = state.message_status.findIndex(
+          s =>
+            s.message_id === action.payload.message_id &&
+            s.user_id === action.payload.user_id
+        )
+
+        if (index !== -1) {
+          state.message_status[index] = action.payload
+        } else {
+          state.message_status.push(action.payload)
+        }
+      })
+      .addCase(AddMessageStatus.rejected, (state, action) => {
+        state.isRefreshing = false
+        state.error = action.payload as string
+      })
+      .addCase(GetMessageStatus.pending, state => {
+        state.isRefreshing = true
+      })
+      .addCase(GetMessageStatus.fulfilled, (state, action) => {
+        state.isRefreshing = false
+        if (!state.message_status) {
+          state.message_status = []
+        }
+
+        const incoming: MessageStatus[] = action.payload
+
+        incoming.forEach(newStatus => {
+          const index = state.message_status!.findIndex(
+            s =>
+              s.message_id === newStatus.message_id &&
+              s.user_id === newStatus.user_id
+          )
+          if (index !== -1) {
+            state.message_status![index] = newStatus
+          } else {
+            state.message_status!.push(newStatus)
+          }
+        })
+      })
+      .addCase(GetMessageStatus.rejected, (state, action) => {
         state.isRefreshing = false
         state.error = action.payload as string
       })

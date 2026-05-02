@@ -1,5 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { api } from '../../api/api'
+import type { MESSAGE_STATUS } from '../../types/status'
+
+
+
 
 export const GetMessages = createAsyncThunk(
   'messages/GetMessages',
@@ -67,3 +71,25 @@ export const PatchMessage = createAsyncThunk(
     }
   }
 )
+
+
+
+export const AddMessageStatus = createAsyncThunk('messages/AddMessageStatus', async ({chat_id, message_id, type}: {chat_id: number, message_id: number, type: MESSAGE_STATUS}, {rejectWithValue}) => {
+  try {
+    const response = await api.post(`/message/${chat_id}/${message_id}/${type}`)
+
+    return response.data
+  } catch (e: any) {
+    return rejectWithValue(e.message)
+  }
+})
+
+export const GetMessageStatus = createAsyncThunk('messages/GetMessageStatus', async ({chat_id, message_id}: {chat_id: number, message_id: number}, {rejectWithValue}) => {
+  try {
+    const response = await api.get(`/message/${chat_id}/${message_id}`)
+
+    return response.data
+  } catch (e: any) {
+    return rejectWithValue(e.message)
+  }
+})
