@@ -24,21 +24,22 @@ const Login = ({}: LoginProps) => {
     }
   }
   return (
-    <div>
-      <h2 className={styles.Title}>Log in</h2>
+    <div className={styles.register}>
+      <h2 className={styles.Title}>Добро пожаловать</h2>
+      <p className={styles.descr}>Зарегестрируйтесь в новый аккаунт</p>
 
       <form action="" className={styles.Form} onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="" className={styles.label}>
           Enter username:
         </label>
-        <input {...register('username')} type="text" className={styles.input} />
+        <input {...register('username')} type="text" className={styles.input1} />
         <label htmlFor="" className={styles.label}>
           Enter password:
         </label>
         <input
           {...register('password')}
           type="password"
-          className={styles.input}
+          className={styles.input2}
         />
 
         <button type="submit" className={styles.btnS}>

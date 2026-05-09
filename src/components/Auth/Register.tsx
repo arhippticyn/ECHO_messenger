@@ -26,27 +26,28 @@ const Register = ({}: RegisterProps) => {
   }
   return (
     <div className={styles.register}>
-      <h2 className={styles.Title}>Sign Up</h2>
+      <h2 className={styles.Title}>Добро пожаловать</h2>
+      <p className={styles.descr}>Зарегестрируйтесь в новый аккаунт</p>
       <form className={styles.Form} action="" onSubmit={handleSubmit(onSubmit)}>
         <label className={styles.label} htmlFor="">
           Enter username
         </label>
-        <input {...register('username')} className={styles.input} type="text" />
+        <input {...register('username')} className={styles.input1} type="text" />
         <label className={styles.label} htmlFor="">
           Enter email
         </label>
-        <input {...register('email')} className={styles.input} type="email" />
+        <input {...register('email')} className={styles.input2} type="email" />
         <label className={styles.label} htmlFor="">
           Enter password
         </label>
         <input
           {...register('password')}
-          className={styles.input}
+          className={styles.input3}
           type="password"
         />
 
         <button className={styles.btnS} type="submit">
-          Sign Up
+          Зарегестрироватся
         </button>
       </form>
     </div>
