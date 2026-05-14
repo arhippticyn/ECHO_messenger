@@ -1,8 +1,9 @@
 import { useForm } from 'react-hook-form'
 import { useTypificatedDispatch } from '../../hooks/reduxHooks'
-import styles from '../../styles/Users/Users.module.css'
 import { FaSearch } from 'react-icons/fa'
 import { GetUsersBySearch } from '../../redux/Users/UsersOperation'
+import styles from '../../styles/Chats/Chats.module.css'
+
 
 interface UserFormProps {}
 
@@ -18,7 +19,7 @@ const UserForm = ({}: UserFormProps) => {
   }
   return (
     <form action="" className={styles.UserForm} onSubmit={handleSubmit(onSubmit)}>
-        <input {...register('search')} type="text" className={styles.userInput} />
+        <input {...register('search')} type="text" className={styles.userInput} placeholder='Поиск пользователей' />
         <button type="submit" className={styles.UserBtnSubmit}><FaSearch /></button>
     </form>
   )

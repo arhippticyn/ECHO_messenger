@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   useTypificatedDispatch,
   useTypificatedSelector,
@@ -12,6 +12,9 @@ import ChatsGroupForm from '../components/Chats/ChatsGroupForm'
 import ChatsList from '../components/Chats/ChatsList'
 import AddUsersGroup from '../components/Chats/AdminFunc/AddUsersGroup'
 import DeleteUsersGroup from '../components/Chats/AdminFunc/DeleteUsersGroup'
+import styles from '../styles/Chats/Chats.module.css'
+import { CiLogout } from 'react-icons/ci'
+import GroupManageModal from '../components/Chats/AdminFunc/GlobalManageModal'
 
 interface HomeProps {}
 
@@ -20,6 +23,8 @@ const Home = ({}: HomeProps) => {
   const user = useTypificatedSelector(selectUser)
   const token = useTypificatedSelector(selectToken)
   const navigate = useNavigate()
+  const [isOpen, setIsOpen] = useState(false)
+  const [devIsOpen, setDevIsOpen] = useState(false)
 
   useEffect(() => {
     dispatch(GetUser())
@@ -44,21 +49,27 @@ const Home = ({}: HomeProps) => {
     navigate('/')
   }
   return (
-    <div>
-      Hello, {user.username}, your email: {user.email}
-      Your status: {user?.is_online ? 'Online' : 'Offline'}
-      <button className="" onClick={handleLogOut}>
-        Log Out
-      </button>
+    <div className={styles.homeUserPage}>
+      <div className={styles.header}>
+        <h1>Echo</h1>
+        {/* <p>{user.username}</p> */}
+        {/* <span>{user?.is_online ? 'Online' : 'Offline'}</span> */}
+        <button className="" onClick={handleLogOut}>
+          <CiLogout />
+        </button>
+      </div>
 
       <UserForm />
+      <button  className={styles.btnOpen} onClick={() => setIsOpen(true)}>Создать группу</button>
+
+      {isOpen && <ChatsGroupForm onClose={() => setIsOpen(false)} />}
+
+      <h2 style={{ paddingLeft: '10px' }}>Пользователи</h2>
       <UsersList />
+      <h2 style={{ paddingLeft: '10px' }}>Чаты</h2>
+      <ChatsList onManage={() => setDevIsOpen(true)} />
 
-      <ChatsGroupForm />
-      <ChatsList />
-
-      <AddUsersGroup />
-      <DeleteUsersGroup />
+      {devIsOpen && <GroupManageModal onClose={() => setIsOpen(false)} />}
     </div>
   )
 }

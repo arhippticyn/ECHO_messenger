@@ -1,19 +1,21 @@
 import { useEffect } from 'react'
-import {
-  useTypificatedDispatch,
-  useTypificatedSelector,
-} from '../../hooks/reduxHooks'
-import {
-  selectChats,
-} from '../../redux/Chats/ChatsSelectors'
+import { selectChats } from '../../redux/Chats/ChatsSelectors'
 import { DeleteChat, GetAllChats } from '../../redux/Chats/ChatsOperation'
 import { selectChatId } from '../../redux/Chats/ChatsSlice'
 import { selectUser } from '../../redux/Auth/AuthSelectors'
 import { Link } from 'react-router-dom'
+import styles from '../../styles/Chats/Chats.module.css'
+import { getAvatarColor } from '../Users/UsersList'
+import {
+  useTypificatedDispatch,
+  useTypificatedSelector,
+} from '../../hooks/reduxHooks'
 
-interface ChatsListProps {}
+interface ChatsListProps {
+  onManage: () => void
+}
 
-const ChatsList = ({}: ChatsListProps) => {
+const ChatsList = ({ onManage }: ChatsListProps) => {
   const dispatch = useTypificatedDispatch()
   const chats = useTypificatedSelector(selectChats)
   const currentUser = useTypificatedSelector(selectUser)
@@ -23,27 +25,30 @@ const ChatsList = ({}: ChatsListProps) => {
   }, [dispatch])
 
   return (
-    <ul>
+    <ul className={styles.ChatList}>
       {chats.map(chat => {
         const myParticipantInfo = chat.participants?.find(
           p => p.user_id === currentUser?.id
         )
         const isIAdmin = myParticipantInfo?.role === 'admin'
+        const avatarName =
+          chat.type === 'group'
+            ? (chat.title ?? `Группа ${chat.id}`)
+            : (chat.interlocutor_name ?? '?')
+        const { bg, color } = getAvatarColor(avatarName)
 
         return (
-          <li
-            key={chat.id}
-            style={{
-              border: '1px solid #ccc',
-              margin: '10px',
-              padding: '10px',
-            }}
-          >
+          <li key={chat.id} className={styles.ChatLi}>
             <Link
               to={`/chat/${chat.id}`}
               style={{ textDecoration: 'none', color: 'inherit' }}
+              className={styles.chatToLink}
             >
-              <h3>
+              <span style={{ background: bg, color }}>
+                {avatarName.slice(0,1).toUpperCase()}
+              </span>
+
+              <h3 className={styles.userTitle}>
                 {chat.type === 'group'
                   ? chat.title || `Группа ${chat.id}`
                   : chat.interlocutor_name}
@@ -52,11 +57,18 @@ const ChatsList = ({}: ChatsListProps) => {
 
             {chat.type === 'group' && (
               <>
-                <button onClick={() => dispatch(selectChatId(chat.id))}>
+                <button
+                  className={styles.Manage}
+                  onClick={() => {
+                    dispatch(selectChatId(chat.id))
+                    onManage()
+                  }}
+                >
                   Manage users
                 </button>
                 {isIAdmin && (
                   <button
+                    className={styles.btnDelete}
                     onClick={e => {
                       e.stopPropagation()
                       dispatch(DeleteChat(chat.id))
