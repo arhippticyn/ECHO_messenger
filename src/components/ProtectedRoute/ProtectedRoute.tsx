@@ -3,6 +3,7 @@ import { useTypificatedDispatch } from '../../hooks/reduxHooks'
 import { useEffect, useState } from 'react'
 import { GetUser, RefreshToAccess } from '../../redux/Auth/AuthOperation'
 import { Navigate } from 'react-router-dom'
+import Loader from '../Loader/Loader'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -31,6 +32,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     verifyUser()
   }, [dispatch])
 
+  if (isVerified === null) return <Loader fullscreen />
   if (isVerified === false) return <Navigate to="/" replace={true} />
   return children
 }

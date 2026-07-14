@@ -19,16 +19,21 @@ export type LoginUserType = {
   password: string
 }
 
+const extractError = (e: any): string => {
+  const detail = e.response?.data?.detail
+  if (Array.isArray(detail)) return detail[0]?.msg ?? 'Ошибка валидации'
+  if (typeof detail === 'string') return detail
+  return e.message ?? 'Неизвестная ошибка'
+}
+
 export const RegisterUser = createAsyncThunk(
   'auth/RegisterUser',
   async (user: RegisterUserType, { rejectWithValue }) => {
     try {
-      console.log('Sending:', user)
       const response = await api.post('/auth/register', user)
       return response.data
     } catch (e: any) {
-      console.log('Error:', e.response?.data)
-      return rejectWithValue(e.message)
+      return rejectWithValue(extractError(e))
     }
   }
 )
@@ -37,12 +42,11 @@ export const LoginUser = createAsyncThunk(
   'auth/LoginUser',
   async (user: LoginUserType, { rejectWithValue }) => {
     try {
-      console.log('LoginUser sending:', user)
       const response = await api.post('/auth/login', user)
 
       return response.data
     } catch (e: any) {
-      return rejectWithValue(e.message)
+      return rejectWithValue(extractError(e))
     }
   }
 )
@@ -90,7 +94,7 @@ export const LogOut = createAsyncThunk(
   'auth/LogOut',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.delete('auth/logout')
+      const response = await api.delete('/auth/logout')
 
       return response.data
     } catch (e: any) {

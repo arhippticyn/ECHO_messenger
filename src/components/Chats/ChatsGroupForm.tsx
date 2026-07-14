@@ -1,12 +1,16 @@
 import { useForm } from 'react-hook-form'
-import { useTypificatedDispatch, useTypificatedSelector } from '../../hooks/reduxHooks'
+import {
+  useTypificatedDispatch,
+  useTypificatedSelector,
+} from '../../hooks/reduxHooks'
 import { selectUsers } from '../../redux/Users/UserSelectors'
+import { selectUser } from '../../redux/Auth/AuthSelectors'
 import { CreateGroupChat } from '../../redux/Chats/ChatsOperation'
 import { useEffect } from 'react'
 import { GetUsersBySearch } from '../../redux/Users/UsersOperation'
-import { getAvatarColor } from '../Users/UsersList' 
-import styles from '../../styles/Chats/Chats.module.css'
 import { createPortal } from 'react-dom'
+import Avatar from '../Avatar/Avatar'
+import styles from './Modal.module.css'
 
 interface ChatsGroupFormProps {
   onClose: () => void
@@ -15,9 +19,10 @@ interface ChatsGroupFormProps {
 const ChatsGroupForm = ({ onClose }: ChatsGroupFormProps) => {
   const dispatch = useTypificatedDispatch()
   const users = useTypificatedSelector(selectUsers)
+  const currentUser = useTypificatedSelector(selectUser)
 
   useEffect(() => {
-    dispatch(GetUsersBySearch())
+    dispatch(GetUsersBySearch(null))
   }, [dispatch])
 
   const { register, handleSubmit, watch, setValue } = useForm<{
@@ -42,14 +47,16 @@ const ChatsGroupForm = ({ onClose }: ChatsGroupFormProps) => {
     onClose()
   }
 
+  const selectableUsers = users?.filter(u => u.id !== currentUser?.id)
+
   return createPortal(
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <div className={styles.headerLeft}>
-            <span className={styles.title}>Новая группа</span>
-          </div>
-          <button className={styles.closeBtn} onClick={onClose}>✕</button>
+          <span className={styles.title}>Новая группа</span>
+          <button type="button" className={styles.closeBtn} onClick={onClose}>
+            ✕
+          </button>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -67,11 +74,12 @@ const ChatsGroupForm = ({ onClose }: ChatsGroupFormProps) => {
             <div className={styles.fieldGroup}>
               <div className={styles.fieldHeader}>
                 <label className={styles.label}>Участники</label>
-                <span className={styles.count}>Выбрано: {selected?.length ?? 0}</span>
+                <span className={styles.count}>
+                  Выбрано: {selected?.length ?? 0}
+                </span>
               </div>
               <div className={styles.usersList}>
-                {users?.map(user => {
-                  const { bg, color } = getAvatarColor(user.username)
+                {selectableUsers?.map(user => {
                   const isSelected = selected?.includes(user.id)
                   return (
                     <div
@@ -79,11 +87,11 @@ const ChatsGroupForm = ({ onClose }: ChatsGroupFormProps) => {
                       className={`${styles.userItem} ${isSelected ? styles.selected : ''}`}
                       onClick={() => toggleUser(user.id)}
                     >
-                      <div className={styles.avatar} style={{ background: bg, color }}>
-                        {user.username[0].toUpperCase()}
-                      </div>
+                      <Avatar name={user.username} size={32} />
                       <span className={styles.userName}>{user.username}</span>
-                      <span className={`${styles.badge} ${user.is_online ? styles.online : styles.offline}`}>
+                      <span
+                        className={`${styles.badge} ${user.is_online ? styles.online : styles.offline}`}
+                      >
                         {user.is_online ? 'онлайн' : 'офлайн'}
                       </span>
                       {isSelected && <span className={styles.check}>✓</span>}
@@ -95,8 +103,16 @@ const ChatsGroupForm = ({ onClose }: ChatsGroupFormProps) => {
           </div>
 
           <div className={styles.footer}>
-            <button type="button" className={styles.btnCancel} onClick={onClose}>Отмена</button>
-            <button type="submit" className={styles.btnCreate}>Создать группу</button>
+            <button
+              type="button"
+              className={styles.btnCancel}
+              onClick={onClose}
+            >
+              Отмена
+            </button>
+            <button type="submit" className={styles.btnPrimary}>
+              Создать группу
+            </button>
           </div>
         </form>
       </div>

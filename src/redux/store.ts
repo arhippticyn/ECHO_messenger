@@ -9,7 +9,7 @@ export const store = configureStore({
         auth: AuthReducer,
         users: UserReducer,
         chats: ChatsReducer,
-        messsage: MessageReducer
+        message: MessageReducer
     }
 })
 

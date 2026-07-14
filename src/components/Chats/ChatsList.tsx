@@ -1,15 +1,16 @@
 import { useEffect } from 'react'
+import { NavLink } from 'react-router-dom'
+import { LuSettings, LuTrash2 } from 'react-icons/lu'
 import { selectChats } from '../../redux/Chats/ChatsSelectors'
 import { DeleteChat, GetAllChats } from '../../redux/Chats/ChatsOperation'
 import { selectChatId } from '../../redux/Chats/ChatsSlice'
 import { selectUser } from '../../redux/Auth/AuthSelectors'
-import { Link } from 'react-router-dom'
-import styles from '../../styles/Chats/Chats.module.css'
-import { getAvatarColor } from '../Users/UsersList'
 import {
   useTypificatedDispatch,
   useTypificatedSelector,
 } from '../../hooks/reduxHooks'
+import Avatar from '../Avatar/Avatar'
+import styles from './ChatsList.module.css'
 
 interface ChatsListProps {
   onManage: () => void
@@ -24,61 +25,68 @@ const ChatsList = ({ onManage }: ChatsListProps) => {
     dispatch(GetAllChats())
   }, [dispatch])
 
+  if (chats.length === 0) {
+    return (
+      <p className={styles.empty}>
+        Пока нет чатов. Найдите пользователя во вкладке «Люди» и начните
+        переписку.
+      </p>
+    )
+  }
+
   return (
-    <ul className={styles.ChatList}>
+    <ul className={styles.list}>
       {chats.map(chat => {
         const myParticipantInfo = chat.participants?.find(
           p => p.user_id === currentUser?.id
         )
-        const isIAdmin = myParticipantInfo?.role === 'admin'
-        const avatarName =
+        const isAdmin = myParticipantInfo?.role === 'admin'
+        const name =
           chat.type === 'group'
-            ? (chat.title ?? `Группа ${chat.id}`)
-            : (chat.interlocutor_name ?? '?')
-        const { bg, color } = getAvatarColor(avatarName)
+            ? chat.title || `Группа ${chat.id}`
+            : chat.interlocutor_name || 'Диалог'
 
         return (
-          <li key={chat.id} className={styles.ChatLi}>
-            <Link
+          <li key={chat.id} className={styles.item}>
+            <NavLink
               to={`/chat/${chat.id}`}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-              className={styles.chatToLink}
+              className={({ isActive }) =>
+                `${styles.link} ${isActive ? styles.active : ''}`
+              }
             >
-              <span style={{ background: bg, color }}>
-                {avatarName.slice(0,1).toUpperCase()}
-              </span>
-
-              <h3 className={styles.userTitle}>
-                {chat.type === 'group'
-                  ? chat.title || `Группа ${chat.id}`
-                  : chat.interlocutor_name}
-              </h3>
-            </Link>
+              <Avatar name={name} size={46} />
+              <div className={styles.meta}>
+                <span className={styles.name}>{name}</span>
+                <span className={styles.type}>
+                  {chat.type === 'group'
+                    ? `Группа · ${chat.participants?.length ?? 0} участников`
+                    : 'Личный чат'}
+                </span>
+              </div>
+            </NavLink>
 
             {chat.type === 'group' && (
-              <>
+              <div className={styles.actions}>
                 <button
-                  className={styles.Manage}
+                  className={styles.actionBtn}
+                  title="Управление участниками"
                   onClick={() => {
                     dispatch(selectChatId(chat.id))
                     onManage()
                   }}
                 >
-                  Manage users
+                  <LuSettings />
                 </button>
-                {isIAdmin && (
+                {isAdmin && (
                   <button
-                    className={styles.btnDelete}
-                    onClick={e => {
-                      e.stopPropagation()
-                      dispatch(DeleteChat(chat.id))
-                    }}
-                    style={{ color: 'red' }}
+                    className={`${styles.actionBtn} ${styles.danger}`}
+                    title="Удалить группу"
+                    onClick={() => dispatch(DeleteChat(chat.id))}
                   >
-                    Delete Group
+                    <LuTrash2 />
                   </button>
                 )}
-              </>
+              </div>
             )}
           </li>
         )

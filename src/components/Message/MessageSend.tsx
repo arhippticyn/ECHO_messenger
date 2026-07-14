@@ -6,78 +6,98 @@ import {
 import { selectUser } from '../../redux/Auth/AuthSelectors'
 import { useForm } from 'react-hook-form'
 import { useEffect, useRef } from 'react'
+import { LuPaperclip, LuSendHorizontal } from 'react-icons/lu'
 import { addMessage } from '../../redux/Message/MessageSlice'
-import MessageFile from './MessageFile'
-
-interface MessageSendProps {}
+import { UploadFileMessage } from '../../redux/Message/MessageOperation'
+import { wsUrl } from '../../api/api'
+import styles from './MessageSend.module.css'
 
 interface FormValues {
   content: string
 }
 
-const MessageSend = ({}: MessageSendProps) => {
+const MessageSend = () => {
   const dispatch = useTypificatedDispatch()
   const user = useTypificatedSelector(selectUser)
   const { chatId } = useParams<{ chatId: string }>()
   const socketRef = useRef<WebSocket | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const { register, handleSubmit, reset } = useForm({
+  const { register, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: { content: '' },
     mode: 'onSubmit',
   })
 
   useEffect(() => {
-    if (chatId) {
-      const socket = new WebSocket(
-        `wss://echo-bj2n.onrender.com/message/ws/${chatId}`
-      )
-      socketRef.current = socket
+    if (!chatId) return
+    const socket = new WebSocket(wsUrl(`/message/ws/${chatId}`))
+    socketRef.current = socket
 
-      socket.onopen = () => console.log('Соединение установлено')
-      socket.onmessage = event => {
-        const newMessage = JSON.parse(event.data)
-        console.log('Новое сообщение:', newMessage)
-
-        dispatch(addMessage(newMessage))
-      }
-      socket.onerror = error => console.log('Ошибка WebSocket:', error)
-
-      return () => {
-        socket.close()
-      }
+    socket.onmessage = event => {
+      const newMessage = JSON.parse(event.data)
+      dispatch(addMessage(newMessage))
     }
-  }, [chatId])
+    socket.onerror = error => console.error('Ошибка WebSocket:', error)
 
-  const onSubmit = async (data: FormValues) => {
-    if (socketRef.current?.readyState === WebSocket.OPEN && user) {
-      const MessagePayload = {
-        type: 'text',
-        content: data.content,
-        sender_id: user.id,
-      }
+    return () => {
+      socket.close()
+    }
+  }, [chatId, dispatch])
 
-      socketRef.current.send(JSON.stringify(MessagePayload))
-
+  const onSubmit = (data: FormValues) => {
+    if (!data.content.trim()) return
+    if (socketRef.current?.readyState === WebSocket.OPEN && user?.id) {
+      socketRef.current.send(
+        JSON.stringify({
+          type: 'text',
+          content: data.content,
+          sender_id: user.id,
+        })
+      )
       reset()
-    } else {
-      console.log('Соединение еще не готово или пользователь не авторизован')
     }
   }
 
-  return (
-    <div>
-      <MessageFile />
-      <form action="" onSubmit={handleSubmit(onSubmit)}>
-        <input
-          {...register('content', { required: true })}
-          type="text"
-          autoComplete="off"
-          placeholder="Напишите сообщение..."
-        />
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !chatId) return
 
-        <button type="submit">Send</button>
-      </form>
-    </div>
+    const formData = new FormData()
+    formData.append('file', file)
+    dispatch(UploadFileMessage({ chat_id: Number(chatId), file: formData }))
+    e.target.value = ''
+  }
+
+  return (
+    <form className={styles.bar} onSubmit={handleSubmit(onSubmit)}>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className={styles.fileInput}
+        onChange={onFileChange}
+      />
+      <button
+        type="button"
+        className={styles.iconBtn}
+        title="Прикрепить изображение"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <LuPaperclip />
+      </button>
+
+      <input
+        {...register('content')}
+        type="text"
+        autoComplete="off"
+        placeholder="Напишите сообщение..."
+        className={styles.input}
+      />
+
+      <button type="submit" className={styles.sendBtn} title="Отправить">
+        <LuSendHorizontal />
+      </button>
+    </form>
   )
 }
 

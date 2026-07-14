@@ -1,16 +1,14 @@
-import styles from '../../styles/Auth/Auth.module.css'
-import { FaGoogle } from "react-icons/fa"
+import { FaGoogle } from 'react-icons/fa'
+import { BACKEND_URL } from '../../api/api'
+import styles from './AuthForms.module.css'
 
-interface GoogleLoginProps {
-    
-}
-
-const GoogleLogin = ({}: GoogleLoginProps) => {
-    return (
-        <div style={{display: 'flex', justifyContent: 'center', }}>
-            <button className={styles.GoogleBtn} onClick={() => window.location.href = 'https://echo-bj2n.onrender.com/auth/google'}>Log In with Google <FaGoogle /></button>
-        </div>
-    )
-}
+const GoogleLogin = () => (
+  <button
+    className={styles.googleBtn}
+    onClick={() => (window.location.href = `${BACKEND_URL}/auth/google`)}
+  >
+    <FaGoogle /> Войти через Google
+  </button>
+)
 
 export default GoogleLogin
